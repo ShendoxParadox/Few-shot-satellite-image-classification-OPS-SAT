@@ -3,3 +3,9 @@
 .ipynb_checkpoints/OPS_SAT_Dev-checkpoint.ipynb
 .ipynb_checkpoints/Image_Augmentation-checkpoint.ipynb
 .ipynb_checkpoints/color_correction-checkpoint.ipynb
+fold_1_best_model_weights.h5
+fold_2_best_model_weights.h5
+fold_3_best_model_weights.h5
+fold_4_best_model_weights.h5
+fold_5_best_model_weights.h5
+best_weights.h5
