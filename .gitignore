@@ -9,3 +9,11 @@ fold_3_best_model_weights.h5
 fold_4_best_model_weights.h5
 fold_5_best_model_weights.h5
 best_weights.h5
+**/*.ramez..log
+**/*.ramez..log
+**/*.yaml
+wandb/run-20230425_155218-m547i015/files/.ipynb_checkpoints/requirements-checkpoint.txt
+**/*.json
+**/*.wandb
+**/*.log
+wandb/latest-run
