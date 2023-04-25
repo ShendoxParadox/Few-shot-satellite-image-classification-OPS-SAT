@@ -17,3 +17,4 @@ wandb/run-20230425_155218-m547i015/files/.ipynb_checkpoints/requirements-checkpo
 **/*.wandb
 **/*.log
 wandb/latest-run
+**/*.txt
