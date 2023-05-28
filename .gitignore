@@ -10,3 +10,8 @@ fold_4_best_model_weights.h5
 fold_5_best_model_weights.h5
 best_weights.h5
 wandb/
+fold_10_best_model_weights.h5
+fold_6_best_model_weights.h5
+fold_7_best_model_weights.h5
+fold_8_best_model_weights.h5
+fold_9_best_model_weights.h5
