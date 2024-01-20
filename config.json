@@ -1,0 +1,27 @@
+{
+    "train_val_dataset_path": "/home/ramez/Politechnika_Slaska_MSc/Thesis/Competition/the_opssat_case_starter_kit-main/Data/Variation_Synthetic_Generation_color_corrected_Augmentation/train/",
+    "test_dataset_path": "/home/ramez/Politechnika_Slaska_MSc/Thesis/Competition/the_opssat_case_starter_kit-main/Data/Variation_Synthetic_Generation_color_corrected_Augmentation/test/",
+    "wandb": {
+        "project": "OPS-SAT-Thesis-Project",
+        "config": {
+            "dropout": 0.5,
+            "num_classes": 8,
+            "input_shape": [200, 200, 3],
+            "model_weights": "OpenSurfaces",
+            "output_layer_activation": "softmax",
+            "model_optimizer": "adam",
+            "loss_fun": "FocalLoss",
+            "model_metrics": ["SparseCategoricalAccuracy"],
+            "early_stopping_monitor": "val_sparse_categorical_accuracy",
+            "early_stopping_patience": 6,
+            "model_checkpoint_monitor": "val_sparse_categorical_accuracy",
+            "cross_validation_k": 7,
+            "model_epochs": 200,
+            "model_batch_size": 4,
+            "alpha_focal_loss": 0.2,
+            "gamma_focal_loss": 2,
+            "n_freeze_layers": 5
+        }
+    }
+
+}

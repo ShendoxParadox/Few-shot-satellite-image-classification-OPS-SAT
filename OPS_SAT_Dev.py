@@ -13,8 +13,6 @@
 # competitors are encouraged to use these patches to improve the model accuracy.
 
 # %%
-import sys
-print(sys.version)
 import tensorflow as tf
 from tensorflow import keras
 import numpy as np
@@ -33,8 +31,11 @@ import os
 import wandb
 from wandb.keras import WandbMetricsLogger, WandbModelCheckpoint
 import pandas as pd
+import json
 from sklearn.metrics import accuracy_score
-# %%
+
+
+
 # Limit GPU memory usage
 gpus = tf.config.experimental.list_physical_devices('GPU')
 if gpus:
@@ -44,12 +45,11 @@ if gpus:
         gpus[0],
         [tf.config.experimental.VirtualDeviceConfiguration(memory_limit=0.7)])
 
-# %%
 # load training data.
 def get_images_from_path(dataset_path):
     """ Get images from path and normalize them applying channel-level normalization. """
     # loading all images in one large batch
-    tf_eval_data = tf.keras.utils.image_dataset_from_directory(dataset_path, image_size=config.input_shape[:2], shuffle=False, 
+    tf_eval_data = tf.keras.utils.image_dataset_from_directory(dataset_path, image_size=config["input_shape"][:2], shuffle=False, 
                                                                batch_size=100000, label_mode='int')
     # get the class names (folder names) from the dataset object
     global class_names
@@ -60,54 +60,21 @@ def get_images_from_path(dataset_path):
     return tf.convert_to_tensor(tf_eval_images), tf_eval_targets
 
 
+## Open configuration file
+with open('config.json', 'r') as config_file:
+    config_data = json.load(config_file)
+
+
 # 4. Loading data
+dataset_path_train_val = config_data.get('train_val_dataset_path', '')
+dataset_path_test = config_data.get('test_dataset_path', '')
 
-## test Variation
-# dataset_path_train_val = "/home/ramez/Politechnika_Slaska_MSc/Thesis/Competition/Data/ops_sat_train/"
-# dataset_path_train_val = "/home/ramez/Politechnika_Slaska_MSc/Thesis/Competition/the_opssat_case_starter_kit-main/Data/Variation_Original/train/"
-# dataset_path_train_val = "/home/ramez/Politechnika_Slaska_MSc/Thesis/Competition/the_opssat_case_starter_kit-main/Data/Variation_Augmentation/train/"
-# dataset_path_train_val = "/home/ramez/Politechnika_Slaska_MSc/Thesis/Competition/the_opssat_case_starter_kit-main/Data/Variation_Synthetic_Generation/train/"
-# dataset_path_train_val = "/home/ramez/Politechnika_Slaska_MSc/Thesis/Competition/the_opssat_case_starter_kit-main/Data/Variation_Synthetic_Generation_color_corrected/train/"
-dataset_path_train_val = "/home/ramez/Politechnika_Slaska_MSc/Thesis/Competition/the_opssat_case_starter_kit-main/Data/Variation_Synthetic_Generation_color_corrected_Augmentation/train/"
 
-## Test Variation
-# dataset_path_test = "/home/ramez/Politechnika_Slaska_MSc/Thesis/Competition/Data/ops_sat_test/"
-# dataset_path_test = "/home/ramez/Politechnika_Slaska_MSc/Thesis/Competition/the_opssat_case_starter_kit-main/Data/Variation_Original/test/"
-# dataset_path_test = "/home/ramez/Politechnika_Slaska_MSc/Thesis/Competition/the_opssat_case_starter_kit-main/Data/Variation_Augmentation/test/"
-# dataset_path_test = "/home/ramez/Politechnika_Slaska_MSc/Thesis/Competition/the_opssat_case_starter_kit-main/Data/Variation_Synthetic_Generation/test/"
-# dataset_path_test = "/home/ramez/Politechnika_Slaska_MSc/Thesis/Competition/the_opssat_case_starter_kit-main/Data/Variation_Synthetic_Generation_color_corrected/test/"
-dataset_path_test = "/home/ramez/Politechnika_Slaska_MSc/Thesis/Competition/the_opssat_case_starter_kit-main/Data/Variation_Synthetic_Generation_color_corrected_Augmentation/test/"
+# Access the specific configuration for WandB initialization
+config = config_data.get('wandb', {}).get('config', {})
+# Initialize WandB
+wandb.init(project=config_data.get('wandb', {}).get('project', ''), config=config)
 
-# Model Configuration
-# Start a run, tracking hyperparameters
-wandb.init(
-    # set the wandb project where this run will be logged
-    project="OPS-SAT-Thesis-Project",
-
-    # track hyperparameters and run metadata with wandb.config
-    config={
-        "dropout": 0.5,
-        "num_classes": 8,
-        "input_shape": (200, 200, 3),
-        "model_weights": "OpenSurfaces",
-        "output_layer_activation": "softmax",
-        "model_optimizer": "adam",
-        "loss_fun": "FocalLoss",
-        # "loss_fun": "SparseCategoricalCrossentropy",
-        "model_metrics": ["SparseCategoricalAccuracy"],
-        "early_stopping_monitor": "val_sparse_categorical_accuracy",
-        "early_stopping_patience": 6,
-        "model_checkpoint_monitor": "val_sparse_categorical_accuracy",
-        "cross_validation_k": 7,
-        "model_epochs": 200,
-        "model_batch_size": 4,
-        "alpha_focal_loss": 0.2, # 0-1 (0.2)
-        "gamma_focal_loss": 2,  # 1-5 (2,3)
-        "n_freeze_layers" : 5
-    }
-)
-
-config = wandb.config
 
 ## Custom Loss Function
 class CustomLoss(tf.keras.losses.Loss):
@@ -118,8 +85,9 @@ class CustomLoss(tf.keras.losses.Loss):
     def call(self, y_true, y_pred):
         return self.scce(y_true, y_pred)
 
+
 ## Focal Loss Loss Function
-def sparse_categorical_focal_loss(y_true, y_pred, gamma=config.gamma_focal_loss, alpha=config.alpha_focal_loss):
+def sparse_categorical_focal_loss(y_true, y_pred, gamma=config["gamma_focal_loss"], alpha=config["alpha_focal_loss"]):
     # Convert target labels to one-hot encoding
     y_true_one_hot = tf.one_hot(tf.cast(y_true, tf.int32), tf.shape(y_pred)[-1])
     # Compute cross-entropy loss
@@ -133,9 +101,10 @@ def sparse_categorical_focal_loss(y_true, y_pred, gamma=config.gamma_focal_loss,
 
 ## Choosing a loss function
 custom_loss_functions = {
-    # 'SparseCategoricalCrossentropy': CustomLoss
+    'SparseCategoricalCrossentropy': CustomLoss,
     'FocalLoss': sparse_categorical_focal_loss
 }
+
 
 #Loading dataset
 x_train_val, y_train_val = get_images_from_path(dataset_path_train_val)
@@ -192,12 +161,14 @@ wandb.log(dataset_info)
 # (https://gitlab.com/EuropeanSpaceAgency/the_opssat_case_starter_kit).**
 
 
+if(config["loss_fun"])=="FocalLoss":
+    custom_loss = custom_loss_functions[config["loss_fun"]]
+elif(config["loss_fun"])=="SparseCategoricalCrossentropy":
+    custom_loss = custom_loss_functions[config["loss_fun"]]()
 
-# custom_loss = custom_loss_functions[config.loss_fun]()
-custom_loss = custom_loss_functions[config.loss_fun]
+print(custom_loss)
 
-
-
+# %%
 
 ## Weight Initialization Imagenet
 
@@ -206,24 +177,24 @@ custom_loss = custom_loss_functions[config.loss_fun]
 #     global early_stopping
 #     global checkpoint
     
-#     model = EfficientNetLiteB0(classes=config.num_classes, weights=config.model_weights, input_shape=config.input_shape, classifier_activation=None, include_top = False)
+#     model = EfficientNetLiteB0(classes=config["num_classes"], weights=config["model_weights"], input_shape=config["input_shape"], classifier_activation=None, include_top = False)
 #     x = model.output
 #     x = GlobalAveragePooling2D()(x)
-#     x = Dropout(config.dropout)(x)
-#     output_layer = Dense(config.num_classes, activation=config.output_layer_activation)(x)
+#     x = Dropout(config["dropout"])(x)
+#     output_layer = Dense(config["num_classes"], activation=config["output_layer_activation"])(x)
 #     model = Model(inputs=model.input, outputs=output_layer)
 #     # model.summary()
     
-#     model.compile(optimizer=config.model_optimizer,
+#     model.compile(optimizer=config["model_optimizer"],
 #                   # loss="sparse_categorical_crossentropy",
 #               # loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=False), 
-#                   # loss=config.loss_fun,
+#                   # loss=config["loss_fun"],
 #                   loss=custom_loss,
 #                   # metrics=[keras.metrics.SparseCategoricalAccuracy()],
-#                  metrics=config.model_metrics)
+#                  metrics=config["model_metrics"])
     
-#     early_stopping = EarlyStopping(monitor=config.early_stopping_monitor, patience=config.early_stopping_patience)
-#     checkpoint = ModelCheckpoint('best_weights.h5', monitor=config.model_checkpoint_monitor, save_best_only=True)
+#     early_stopping = EarlyStopping(monitor=config["early_stopping_monitor"], patience=config["early_stopping_patience"])
+#     checkpoint = ModelCheckpoint('best_weights.h5', monitor=config["model_checkpoint_monitor"], save_best_only=True)
     
 # # wandb_callback=wandb.keras.WandbCallback()
 
@@ -245,32 +216,32 @@ custom_loss = custom_loss_functions[config.loss_fun]
 #     global checkpoint
     
 #     # Load the pre-trained EfficientNetLiteB0 model without the top classification layer
-#     base_model = EfficientNetLiteB0(weights=config.model_weights, input_shape=config.input_shape, include_top=False)
+#     base_model = EfficientNetLiteB0(weights=config["model_weights"], input_shape=config["input_shape"], include_top=False)
     
 #     total_layers = len(base_model.layers)
 #     print("Total layers in the base model:", total_layers)
     
 #     # Freeze the early n layers of the base model
-#     n_layers_to_freeze = config.n_freeze_layers
+#     n_layers_to_freeze = config["n_freeze_layers"]
 #     for layer in base_model.layers[:n_layers_to_freeze]:
 #         layer.trainable = False
 
 #     # Build the top layers for classification
 #     x = base_model.output
 #     x = GlobalAveragePooling2D()(x)
-#     x = Dropout(config.dropout)(x)
-#     output_layer = Dense(config.num_classes, activation=config.output_layer_activation)(x)
+#     x = Dropout(config["dropout"])(x)
+#     output_layer = Dense(config["num_classes"], activation=config["output_layer_activation"])(x)
 #     model = Model(inputs=base_model.input, outputs=output_layer)
     
 #     # model.summary()
     
     
-#     model.compile(optimizer=config.model_optimizer,
+#     model.compile(optimizer=config["model_optimizer"],
 #                   loss=custom_loss,
-#                   metrics=config.model_metrics)
+#                   metrics=config["model_metrics"])
     
-#     early_stopping = EarlyStopping(monitor=config.early_stopping_monitor, patience=config.early_stopping_patience)
-#     checkpoint = ModelCheckpoint('best_weights.h5', monitor=config.model_checkpoint_monitor, save_best_only=True)
+#     early_stopping = EarlyStopping(monitor=config["early_stopping_monitor"], patience=config["early_stopping_patience"])
+#     checkpoint = ModelCheckpoint('best_weights.h5', monitor=config["model_checkpoint_monitor"], save_best_only=True)
 
 
 
@@ -284,40 +255,40 @@ def model_init():
     global checkpoint
     
     # Load the pre-trained EfficientNetLiteB0 model without the top classification layer
-    # base_model = EfficientNetLiteB0(weights=config.model_weights, input_shape=config.input_shape, include_top=False)
+    # base_model = EfficientNetLiteB0(weights=config["model_weights"], input_shape=config["input_shape"], include_top=False)
     
-    # base_model = EfficientNetLiteB0(weights="../Data/model_patterns_20epochs.h5", input_shape=config.input_shape, include_top=False)
-    base_model = EfficientNetLiteB0(classes=config.num_classes, weights=None, input_shape=config.input_shape, classifier_activation=None)
+    # base_model = EfficientNetLiteB0(weights="../Data/model_patterns_20epochs.h5", input_shape=config["input_shape"], include_top=False)
+    base_model = EfficientNetLiteB0(classes=config["num_classes"], weights=None, input_shape=config["input_shape"], classifier_activation=None)
     base_model.load_weights('../Data/landuse_20_epochs.h5')
     
     total_layers = len(base_model.layers)
     print("Total layers in the base model:", total_layers)
     
     # Freeze the early n layers of the base model
-    n_layers_to_freeze = config.n_freeze_layers
+    n_layers_to_freeze = config["n_freeze_layers"]
     for layer in base_model.layers[:n_layers_to_freeze]:
         layer.trainable = False
 
     # Build the top layers for classification
     x = base_model.output
     x = Flatten()(x)  # Use Flatten layer instead of GlobalAveragePooling2D
-    x = Dropout(config.dropout)(x)
-    output_layer = Dense(config.num_classes, activation=config.output_layer_activation)(x)
+    x = Dropout(config["dropout"])(x)
+    output_layer = Dense(config["num_classes"], activation=config["output_layer_activation"])(x)
     model = Model(inputs=base_model.input, outputs=output_layer)
     
-    model.compile(optimizer=config.model_optimizer,
+    model.compile(optimizer=config["model_optimizer"],
                   loss=custom_loss,
-                  metrics=config.model_metrics)
+                  metrics=config["model_metrics"])
     
-    early_stopping = EarlyStopping(monitor=config.early_stopping_monitor, patience=config.early_stopping_patience)
-    checkpoint = ModelCheckpoint('best_weights.h5', monitor=config.model_checkpoint_monitor, save_best_only=True)
+    early_stopping = EarlyStopping(monitor=config["early_stopping_monitor"], patience=config["early_stopping_patience"])
+    checkpoint = ModelCheckpoint('best_weights.h5', monitor=config["model_checkpoint_monitor"], save_best_only=True)
 
 
 
 
 
 ## K fold Cross Validation    
-kf = KFold(n_splits=config.cross_validation_k, shuffle=True)
+kf = KFold(n_splits=config["cross_validation_k"], shuffle=True)
 
 
 # Train and evaluate the model using K-fold cross-validation
@@ -339,7 +310,7 @@ for train_idx, val_idx in kf.split(x_train_val):
     X_val = tf.gather(x_train_val, val_idx)
     y_val = tf.gather(y_train_val, val_idx)
     
-    history = model.fit(X_train, y_train, validation_data=(X_val, y_val), epochs= config.model_epochs, verbose=1, batch_size=config.model_batch_size, 
+    history = model.fit(X_train, y_train, validation_data=(X_val, y_val), epochs= config["model_epochs"], verbose=1, batch_size=config["model_batch_size"], 
                         callbacks=[early_stopping, checkpoint])
 
     training_accuracy.append(history.history['sparse_categorical_accuracy'])
@@ -425,7 +396,7 @@ wandb.log({"Accuracy for model with best validation accuracy (Unified Test Set)"
 
 ## Ensemble model from the k trained models
 models = []
-for i in range(1, (config.cross_validation_k + 1)):
+for i in range(1, (config["cross_validation_k"] + 1)):
     # models.append(keras.models.load_model('fold_' + str(i) + '_best_model_weights.h5', custom_objects={'CustomLoss': custom_loss}))
     models.append(keras.models.load_model('fold_' + str(i) + '_best_model_weights.h5', custom_objects={'sparse_categorical_focal_loss': custom_loss}))
     
@@ -435,7 +406,7 @@ for model in models:
     y_preds.append(y_pred)
     
 # combine the predictions using voting or averaging
-y_ensemble = sum(y_preds) / config.cross_validation_k
+y_ensemble = sum(y_preds) / config["cross_validation_k"]
 
 
 
@@ -483,7 +454,7 @@ validation_loss = [element for sublist in validation_loss for element in sublist
 
 xs = []
 ys = []
-for i in range(config.cross_validation_k):
+for i in range(config["cross_validation_k"]):
     xs.append(eps_per_fold_cum[i]+1)
     ys.append(training_accuracy[eps_per_fold_cum[0]-1])
 
@@ -500,11 +471,11 @@ plt.plot(x2, validation_accuracy, label='Validation Accuracy')
 
 
 # Add points with labels
-for i in range(config.cross_validation_k-1):
+for i in range(config["cross_validation_k"]-1):
     plt.axvline(x=xs[i], color='red', linestyle='--')
 
 # Add annotations to the lines
-for i in range(config.cross_validation_k-1):
+for i in range(config["cross_validation_k"]-1):
     plt.annotate('Fold '+str(i+2), xy=(xs[i], 0.2), xytext=(xs[i]+1, 0.15),
              arrowprops=dict(facecolor='black', arrowstyle='->'))
 
@@ -530,11 +501,11 @@ plt.plot(x2, validation_loss, label='Validation Loss')
 
 
 # Add points with labels
-for i in range(config.cross_validation_k-1):
+for i in range(config["cross_validation_k"]-1):
     plt.axvline(x=xs[i], color='red', linestyle='--')
 
 # Add annotations to the lines
-for i in range(config.cross_validation_k-1):
+for i in range(config["cross_validation_k"]-1):
     plt.annotate('Fold '+str(i+2), xy=(xs[i], 0), xytext=(xs[i]+1, 0),
              arrowprops=dict(facecolor='black', arrowstyle='->'))
 
