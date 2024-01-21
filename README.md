@@ -54,3 +54,8 @@
   - /src (or /code, /scripts, etc.)
     - Your source code files
   - README.md
+
+  ## Supplementary Links
+
+  - [ESA OPS-SAT Competition](https://kelvins.esa.int/opssat/home/)
+  - [Dataset on Zenodo](https://zenodo.org/records/6524750)
