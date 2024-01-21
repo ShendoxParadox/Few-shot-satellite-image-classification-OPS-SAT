@@ -1,17 +1,16 @@
 {
-    "train_val_dataset_path": "/home/ramez/Politechnika_Slaska_MSc/Thesis/Competition/the_opssat_case_starter_kit-main/Data/Variation_Synthetic_Generation_color_corrected_Augmentation/train/",
-    "test_dataset_path": "/home/ramez/Politechnika_Slaska_MSc/Thesis/Competition/the_opssat_case_starter_kit-main/Data/Variation_Synthetic_Generation_color_corrected_Augmentation/test/",
+    "train_val_dataset_path": "../Data/Variation_Synthetic_Generation_color_corrected_Augmentation/train/",
+    "test_dataset_path": "../Data/Variation_Synthetic_Generation_color_corrected_Augmentation/test/",
     "Dataset Name": "The OPS-SAT case dataset",
     "Dataset Variation Description": "Augmentated Color Corrected Synthetic Variation",
-    "Transfer Learning":true,
-    "Transfer Learning Dataset": "imagenet",
+    "Transfer Learning":false,
+    "Transfer Learning Dataset": "landuse",
     "wandb": {
         "project": "OPS-SAT-Thesis-Project",
         "config": {
             "dropout": 0.5,
             "num_classes": 8,
             "input_shape": [200, 200, 3],
-            "model_weights": "OpenSurfaces",
             "output_layer_activation": "softmax",
             "model_optimizer": "adam",
             "loss_fun": "FocalLoss",

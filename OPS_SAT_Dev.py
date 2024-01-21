@@ -178,7 +178,7 @@ def model_init(tf_dataset = 'imagenet', tf = True):
     global checkpoint
 
     if(tf == False): ## pretraining
-        model = EfficientNetLiteB0(classes=config["num_classes"], weights=config["model_weights"],
+        model = EfficientNetLiteB0(classes=config["num_classes"], weights="imagenet",
                                     input_shape=config["input_shape"], classifier_activation=None, 
                                     include_top = False)
     
@@ -191,7 +191,7 @@ def model_init(tf_dataset = 'imagenet', tf = True):
     else: ## Transfer learning
         if(tf_dataset == 'imagenet'):
             # Load the pre-trained EfficientNetLiteB0 model without the top classification layer
-            base_model = EfficientNetLiteB0(weights=config["model_weights"], input_shape=config["input_shape"], include_top=False)
+            base_model = EfficientNetLiteB0(weights="imagenet", input_shape=config["input_shape"], include_top=False)
 
         elif(tf_dataset == 'landuse'):
             base_model = EfficientNetLiteB0(classes=config["num_classes"], weights=None, input_shape=config["input_shape"], classifier_activation=None)
@@ -201,29 +201,29 @@ def model_init(tf_dataset = 'imagenet', tf = True):
             base_model = EfficientNetLiteB0(classes=config["num_classes"], weights=None, input_shape=config["input_shape"], classifier_activation=None)
             base_model.load_weights('../Data/model_patterns_20epochs.h5')
 
-    total_layers = len(base_model.layers)
-    print("Total layers in the base model:", total_layers)
+        total_layers = len(base_model.layers)
+        print("Total layers in the base model:", total_layers)
 
-    # Freeze the early n layers of the base model
-    n_layers_to_freeze = config["n_freeze_layers"]
-    for layer in base_model.layers[:n_layers_to_freeze]:
-        layer.trainable = False
+        # Freeze the early n layers of the base model
+        n_layers_to_freeze = config["n_freeze_layers"]
+        for layer in base_model.layers[:n_layers_to_freeze]:
+            layer.trainable = False
 
-    if(tf_dataset == 'imagenet'):
-        # Build the top layers for classification
-        x = base_model.output
-        x = GlobalAveragePooling2D()(x)
-        x = Dropout(config["dropout"])(x)
-        output_layer = Dense(config["num_classes"], activation=config["output_layer_activation"])(x)
-        model = Model(inputs=base_model.input, outputs=output_layer)
+        if(tf_dataset == 'imagenet'):
+            # Build the top layers for classification
+            x = base_model.output
+            x = GlobalAveragePooling2D()(x)
+            x = Dropout(config["dropout"])(x)
+            output_layer = Dense(config["num_classes"], activation=config["output_layer_activation"])(x)
+            model = Model(inputs=base_model.input, outputs=output_layer)
 
-    else:
-        # Build the top layers for classification
-        x = base_model.output
-        x = Flatten()(x)  # Use Flatten layer instead of GlobalAveragePooling2D
-        x = Dropout(config["dropout"])(x)
-        output_layer = Dense(config["num_classes"], activation=config["output_layer_activation"])(x)
-        model = Model(inputs=base_model.input, outputs=output_layer)
+        else:
+            # Build the top layers for classification
+            x = base_model.output
+            x = Flatten()(x)  # Use Flatten layer instead of GlobalAveragePooling2D
+            x = Dropout(config["dropout"])(x)
+            output_layer = Dense(config["num_classes"], activation=config["output_layer_activation"])(x)
+            model = Model(inputs=base_model.input, outputs=output_layer)
 
     model.compile(optimizer=config["model_optimizer"],
                   loss=custom_loss,
