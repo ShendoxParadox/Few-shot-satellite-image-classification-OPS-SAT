@@ -43,6 +43,11 @@
   - Dropout: 0.5
   - Other parameters are consistent with the model configuration.
 
+## Supplementary Links
+
+- [ESA OPS-SAT Competition](https://kelvins.esa.int/opssat/home/)
+- [Dataset on Zenodo](https://zenodo.org/records/6524750)
+
 ## Project Structure
 
 ```plaintext
@@ -55,7 +60,4 @@
     - Your source code files
   - README.md
 
-  ## Supplementary Links
 
-  - [ESA OPS-SAT Competition](https://kelvins.esa.int/opssat/home/)
-  - [Dataset on Zenodo](https://zenodo.org/records/6524750)
