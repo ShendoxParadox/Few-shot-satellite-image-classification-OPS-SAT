@@ -132,9 +132,8 @@ else:
 # Logging Info about the Dataset
 train_val_len = len(x_train_val)
 test_len = len(x_test)
-dataset_name = "The OPS-SAT case dataset"
-dataset_variation_description = "Augmentated Color Corrected Synthetic Variation"
-dataset_train_val_path = dataset_path_train_val
+dataset_name = config_data.get('Dataset Name', '')
+dataset_variation_description = config_data.get('Dataset Variation Description', '')
 
 
 dataset_info = {"Dataset Name": dataset_name, 
@@ -166,124 +165,72 @@ if(config["loss_fun"])=="FocalLoss":
 elif(config["loss_fun"])=="SparseCategoricalCrossentropy":
     custom_loss = custom_loss_functions[config["loss_fun"]]()
 
-print(custom_loss)
+
+
+tf_flag = config_data.get('Transfer Learning', '')
+tf_dataset = config_data.get('Transfer Learning Dataset', '')
 
 # %%
 
-## Weight Initialization Imagenet
-
-# def model_init():
-#     global model
-#     global early_stopping
-#     global checkpoint
-    
-#     model = EfficientNetLiteB0(classes=config["num_classes"], weights=config["model_weights"], input_shape=config["input_shape"], classifier_activation=None, include_top = False)
-#     x = model.output
-#     x = GlobalAveragePooling2D()(x)
-#     x = Dropout(config["dropout"])(x)
-#     output_layer = Dense(config["num_classes"], activation=config["output_layer_activation"])(x)
-#     model = Model(inputs=model.input, outputs=output_layer)
-#     # model.summary()
-    
-#     model.compile(optimizer=config["model_optimizer"],
-#                   # loss="sparse_categorical_crossentropy",
-#               # loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=False), 
-#                   # loss=config["loss_fun"],
-#                   loss=custom_loss,
-#                   # metrics=[keras.metrics.SparseCategoricalAccuracy()],
-#                  metrics=config["model_metrics"])
-    
-#     early_stopping = EarlyStopping(monitor=config["early_stopping_monitor"], patience=config["early_stopping_patience"])
-#     checkpoint = ModelCheckpoint('best_weights.h5', monitor=config["model_checkpoint_monitor"], save_best_only=True)
-    
-# # wandb_callback=wandb.keras.WandbCallback()
-
-
-
-
-
-
-
-
-
-
-
-## Transfer Learning (Fine-tuning) - Imagenet
-
-# def model_init():
-#     global model
-#     global early_stopping
-#     global checkpoint
-    
-#     # Load the pre-trained EfficientNetLiteB0 model without the top classification layer
-#     base_model = EfficientNetLiteB0(weights=config["model_weights"], input_shape=config["input_shape"], include_top=False)
-    
-#     total_layers = len(base_model.layers)
-#     print("Total layers in the base model:", total_layers)
-    
-#     # Freeze the early n layers of the base model
-#     n_layers_to_freeze = config["n_freeze_layers"]
-#     for layer in base_model.layers[:n_layers_to_freeze]:
-#         layer.trainable = False
-
-#     # Build the top layers for classification
-#     x = base_model.output
-#     x = GlobalAveragePooling2D()(x)
-#     x = Dropout(config["dropout"])(x)
-#     output_layer = Dense(config["num_classes"], activation=config["output_layer_activation"])(x)
-#     model = Model(inputs=base_model.input, outputs=output_layer)
-    
-#     # model.summary()
-    
-    
-#     model.compile(optimizer=config["model_optimizer"],
-#                   loss=custom_loss,
-#                   metrics=config["model_metrics"])
-    
-#     early_stopping = EarlyStopping(monitor=config["early_stopping_monitor"], patience=config["early_stopping_patience"])
-#     checkpoint = ModelCheckpoint('best_weights.h5', monitor=config["model_checkpoint_monitor"], save_best_only=True)
-
-
-
-
-
-## Transfer Learning (Fine tuning) - OpenSurfaces dataset
-
-def model_init():
+def model_init(tf_dataset = 'imagenet', tf = True):
     global model
     global early_stopping
     global checkpoint
+
+    if(tf == False): ## pretraining
+        model = EfficientNetLiteB0(classes=config["num_classes"], weights=config["model_weights"],
+                                    input_shape=config["input_shape"], classifier_activation=None, 
+                                    include_top = False)
     
-    # Load the pre-trained EfficientNetLiteB0 model without the top classification layer
-    # base_model = EfficientNetLiteB0(weights=config["model_weights"], input_shape=config["input_shape"], include_top=False)
-    
-    # base_model = EfficientNetLiteB0(weights="../Data/model_patterns_20epochs.h5", input_shape=config["input_shape"], include_top=False)
-    base_model = EfficientNetLiteB0(classes=config["num_classes"], weights=None, input_shape=config["input_shape"], classifier_activation=None)
-    base_model.load_weights('../Data/landuse_20_epochs.h5')
-    
+        x = model.output
+        x = GlobalAveragePooling2D()(x)
+        x = Dropout(config["dropout"])(x)
+        output_layer = Dense(config["num_classes"], activation=config["output_layer_activation"])(x)
+        model = Model(inputs=model.input, outputs=output_layer)
+
+    else: ## Transfer learning
+        if(tf_dataset == 'imagenet'):
+            # Load the pre-trained EfficientNetLiteB0 model without the top classification layer
+            base_model = EfficientNetLiteB0(weights=config["model_weights"], input_shape=config["input_shape"], include_top=False)
+
+        elif(tf_dataset == 'landuse'):
+            base_model = EfficientNetLiteB0(classes=config["num_classes"], weights=None, input_shape=config["input_shape"], classifier_activation=None)
+            base_model.load_weights('../Data/landuse_20_epochs.h5')
+
+        elif(tf_dataset == 'opensurfaces'):
+            base_model = EfficientNetLiteB0(classes=config["num_classes"], weights=None, input_shape=config["input_shape"], classifier_activation=None)
+            base_model.load_weights('../Data/model_patterns_20epochs.h5')
+
     total_layers = len(base_model.layers)
     print("Total layers in the base model:", total_layers)
-    
+
     # Freeze the early n layers of the base model
     n_layers_to_freeze = config["n_freeze_layers"]
     for layer in base_model.layers[:n_layers_to_freeze]:
         layer.trainable = False
 
-    # Build the top layers for classification
-    x = base_model.output
-    x = Flatten()(x)  # Use Flatten layer instead of GlobalAveragePooling2D
-    x = Dropout(config["dropout"])(x)
-    output_layer = Dense(config["num_classes"], activation=config["output_layer_activation"])(x)
-    model = Model(inputs=base_model.input, outputs=output_layer)
-    
+    if(tf_dataset == 'imagenet'):
+        # Build the top layers for classification
+        x = base_model.output
+        x = GlobalAveragePooling2D()(x)
+        x = Dropout(config["dropout"])(x)
+        output_layer = Dense(config["num_classes"], activation=config["output_layer_activation"])(x)
+        model = Model(inputs=base_model.input, outputs=output_layer)
+
+    else:
+        # Build the top layers for classification
+        x = base_model.output
+        x = Flatten()(x)  # Use Flatten layer instead of GlobalAveragePooling2D
+        x = Dropout(config["dropout"])(x)
+        output_layer = Dense(config["num_classes"], activation=config["output_layer_activation"])(x)
+        model = Model(inputs=base_model.input, outputs=output_layer)
+
     model.compile(optimizer=config["model_optimizer"],
                   loss=custom_loss,
                   metrics=config["model_metrics"])
     
     early_stopping = EarlyStopping(monitor=config["early_stopping_monitor"], patience=config["early_stopping_patience"])
     checkpoint = ModelCheckpoint('best_weights.h5', monitor=config["model_checkpoint_monitor"], save_best_only=True)
-
-
 
 
 
@@ -299,7 +246,7 @@ training_loss = []
 validation_loss = []
 
 ## Initializing the model
-model_init()
+model_init(tf_dataset=tf_dataset, tf=tf_flag)
 
 ## counter for folds
 i = 1
@@ -337,7 +284,7 @@ for train_idx, val_idx in kf.split(x_train_val):
     wandb.save(new_name)
     
     ## Reseting the model for the next fold
-    model_init()
+    model_init(tf_dataset=tf_dataset, tf=tf_flag)
 
 
 
