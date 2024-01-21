@@ -18,7 +18,7 @@ from tensorflow import keras
 import numpy as np
 from sklearn.metrics import cohen_kappa_score
 ## Local EfficientNetLite (Customized by the Competition)
-from efficientnet_lite import EfficientNetLiteB0
+from src.efficientnet_lite import EfficientNetLiteB0
 from sklearn.model_selection import KFold
 from tensorflow.keras.models import Model
 from tensorflow.keras.layers import GlobalAveragePooling2D, Dense, Dropout
