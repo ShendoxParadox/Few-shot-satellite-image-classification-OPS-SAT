@@ -58,6 +58,7 @@ For any additional information or troubleshooting, refer to the documentation or
 
 - **Training/Validation Dataset Path:** ../Data/Variation_Synthetic_Generation_color_corrected_Augmentation/train/
 - **Test Dataset Path:** ../Data/Variation_Synthetic_Generation_color_corrected_Augmentation/test/
+
 Change the path of the training and test datasets from the available dataset variations in the Data folder.
 
 ## Model Configuration
