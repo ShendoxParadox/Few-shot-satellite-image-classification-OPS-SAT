@@ -77,8 +77,7 @@ The available transfer learning datasets are: landuse, imagenet, opensurfaces
 - **Dropout:** 0.5
 - **Output Layer Activation:** Softmax
 - **Model Optimizer:** Adam
-- **Loss Function:** FocalLoss
-
+- **Loss Function:** FocalLoss  
 The implemented loss functions to use from are: FocalLoss, SparseCategoricalCrossentropy
 - **Model Metrics:** [SparseCategoricalAccuracy]
 - **Early Stopping:**
