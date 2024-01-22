@@ -1,4 +1,53 @@
-# OPS-SAT Project
+# Few-shot Satellite Image Classification with OPS-SAT
+
+Welcome to the Few-shot Satellite Image Classification repository using OPS-SAT! Follow the steps below to get started:
+
+## Usage Guide
+
+1. **Clone the Repository:**
+    ```bash
+    git clone https://github.com/ShendoxParadox/Few-shot-satellite-image-classification-OPS-SAT.git
+    ```
+
+2. **Navigate to Repo Root Folder:**
+    ```bash
+    cd Few-shot-satellite-image-classification-OPS-SAT
+    ```
+
+3. **Build Docker Image:**
+    ```bash
+    docker build --no-cache -t ops_sat:latest .
+    ```
+
+4. **Run Docker Container:**
+    ```bash
+    docker run -it ops_sat
+    ```
+
+5. **Modify Configuration:**
+    Edit the `config.json` file as needed:
+    ```bash
+    nano config.json
+    ```
+
+6. **Navigate to Source Folder:**
+    ```bash
+    cd src/
+    ```
+
+7. **Run OPS-SAT Development Script:**
+    ```bash
+    python OPS_SAT_Dev.py
+    ```
+
+8. **Choose W&B Option:**
+    Follow the prompts to choose the WandB option during script execution.
+
+9. **View Run Results:**
+    Navigate to the WandB dashboard to observe the run results.
+
+For any additional information or troubleshooting, refer to the documentation or contact the repository owner.
+
 
 ## Dataset Information
 
