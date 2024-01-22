@@ -195,11 +195,11 @@ def model_init(tf_dataset = 'imagenet', tf = True):
 
         elif(tf_dataset == 'landuse'):
             base_model = EfficientNetLiteB0(classes=config["num_classes"], weights=None, input_shape=config["input_shape"], classifier_activation=None)
-            base_model.load_weights('../Data/landuse_20_epochs.h5')
+            base_model.load_weights('Data/landuse_20_epochs.h5')
 
         elif(tf_dataset == 'opensurfaces'):
             base_model = EfficientNetLiteB0(classes=config["num_classes"], weights=None, input_shape=config["input_shape"], classifier_activation=None)
-            base_model.load_weights('../Data/model_patterns_20epochs.h5')
+            base_model.load_weights('Data/model_patterns_20epochs.h5')
 
         total_layers = len(base_model.layers)
         print("Total layers in the base model:", total_layers)
@@ -230,7 +230,7 @@ def model_init(tf_dataset = 'imagenet', tf = True):
                   metrics=config["model_metrics"])
     
     early_stopping = EarlyStopping(monitor=config["early_stopping_monitor"], patience=config["early_stopping_patience"])
-    checkpoint = ModelCheckpoint('best_weights.h5', monitor=config["model_checkpoint_monitor"], save_best_only=True)
+    checkpoint = ModelCheckpoint('models/best_weights.h5', monitor=config["model_checkpoint_monitor"], save_best_only=True)
 
 
 
@@ -265,7 +265,7 @@ for train_idx, val_idx in kf.split(x_train_val):
     training_loss.append(history.history['loss'])
     validation_loss.append(history.history['val_loss'])
     
-    model.load_weights('best_weights.h5')
+    model.load_weights('models/best_weights.h5')
     score = model.evaluate(X_val, y_val)
     scores.append(score[1])
     
@@ -273,8 +273,8 @@ for train_idx, val_idx in kf.split(x_train_val):
     wandb.log({"Best Validation Accuracy for Folds" : score[1]})
     
     # Define the current and new file names
-    current_name = 'best_weights.h5'
-    new_name = 'fold_' + str(i) + '_best_model_weights.h5'
+    current_name = 'models/best_weights.h5'
+    new_name = 'models/fold_' + str(i) + '_best_model_weights.h5'
     
     i+=1
 
@@ -305,7 +305,7 @@ maximum = max(scores)
 index_of_maximum = scores.index(maximum)
 best_fold = index_of_maximum + 1
 
-model.load_weights('fold_' + str(best_fold) + '_best_model_weights.h5')
+model.load_weights('models/fold_' + str(best_fold) + '_best_model_weights.h5')
 
 
 ### Model with best validation accuracy Kohen's Kappa Score
@@ -344,8 +344,11 @@ wandb.log({"Accuracy for model with best validation accuracy (Unified Test Set)"
 ## Ensemble model from the k trained models
 models = []
 for i in range(1, (config["cross_validation_k"] + 1)):
-    # models.append(keras.models.load_model('fold_' + str(i) + '_best_model_weights.h5', custom_objects={'CustomLoss': custom_loss}))
-    models.append(keras.models.load_model('fold_' + str(i) + '_best_model_weights.h5', custom_objects={'sparse_categorical_focal_loss': custom_loss}))
+    if(config["loss_fun"])=="FocalLoss":
+        models.append(keras.models.load_model('models/fold_' + str(i) + '_best_model_weights.h5', custom_objects={'sparse_categorical_focal_loss': custom_loss}))
+    elif(config["loss_fun"])=="SparseCategoricalCrossentropy":
+        models.append(keras.models.load_model('models/fold_' + str(i) + '_best_model_weights.h5', custom_objects={'CustomLoss': custom_loss}))
+    
     
 y_preds = []
 for model in models:
