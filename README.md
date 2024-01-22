@@ -57,17 +57,14 @@ For any additional information or troubleshooting, refer to the documentation or
 ### Dataset Paths
 
 - **Training/Validation Dataset Path:** ../Data/Variation_Synthetic_Generation_color_corrected_Augmentation/train/
-- **Test Dataset Path:** ../Data/Variation_Synthetic_Generation_color_corrected_Augmentation/test/
-
+- **Test Dataset Path:** ../Data/Variation_Synthetic_Generation_color_corrected_Augmentation/test/  
 Change the path of the training and test datasets from the available dataset variations in the Data folder.
 
 ## Model Configuration
 
-- **Transfer Learning:** false
-
+- **Transfer Learning:** false  
 Means that the model will utilize pretraining using imagenet. If true, it will use transfer learning techniques.
-- **Transfer Learning Dataset:** landuse
-
+- **Transfer Learning Dataset:** landuse  
 The available transfer learning datasets are: landuse, imagenet, opensurfaces
 
 ### Model Parameters
@@ -90,11 +87,9 @@ The implemented loss functions to use from are: FocalLoss, SparseCategoricalCros
 - **Batch Size:** 4
 - **Focal Loss Parameters:**
   - Alpha: 0.2
-  - Gamma: 2
-
+  - Gamma: 2  
   If loss function is FocalLoss
-- **Number of Freeze Layers:** 5
-
+- **Number of Freeze Layers:** 5  
   If transfer learning is true.
 
 ## Supplementary Links
