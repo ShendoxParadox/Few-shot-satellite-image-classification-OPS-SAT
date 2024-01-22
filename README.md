@@ -64,8 +64,10 @@ Change the path of the training and test datasets from the available dataset var
 ## Model Configuration
 
 - **Transfer Learning:** false
+
 Means that the model will utilize pretraining using imagenet. If true, it will use transfer learning techniques.
 - **Transfer Learning Dataset:** landuse
+
 The available transfer learning datasets are: landuse, imagenet, opensurfaces
 
 ### Model Parameters
@@ -76,6 +78,7 @@ The available transfer learning datasets are: landuse, imagenet, opensurfaces
 - **Output Layer Activation:** Softmax
 - **Model Optimizer:** Adam
 - **Loss Function:** FocalLoss
+
 The implemented loss functions to use from are: FocalLoss, SparseCategoricalCrossentropy
 - **Model Metrics:** [SparseCategoricalAccuracy]
 - **Early Stopping:**
@@ -89,8 +92,10 @@ The implemented loss functions to use from are: FocalLoss, SparseCategoricalCros
 - **Focal Loss Parameters:**
   - Alpha: 0.2
   - Gamma: 2
+
   If loss function is FocalLoss
 - **Number of Freeze Layers:** 5
+
   If transfer learning is true.
 
 ## Supplementary Links
