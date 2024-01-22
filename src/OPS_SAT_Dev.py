@@ -13,6 +13,9 @@
 # competitors are encouraged to use these patches to improve the model accuracy.
 
 # %%
+import os
+if(os.getcwd()[-3:]) == "src":
+    os.chdir("../")
 import tensorflow as tf
 from tensorflow import keras
 import numpy as np
@@ -35,6 +38,8 @@ import json
 from sklearn.metrics import accuracy_score
 
 
+
+# %%
 
 # Limit GPU memory usage
 gpus = tf.config.experimental.list_physical_devices('GPU')
