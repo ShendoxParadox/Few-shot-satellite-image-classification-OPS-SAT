@@ -14,39 +14,59 @@ Welcome to the Few-shot Satellite Image Classification (OPS-SAT) repository Foll
     cd Few-shot-satellite-image-classification-OPS-SAT
     ```
 
-3. **Build Docker Image:**
+
+### Using Conda
+
+#### Step 1: Create a Virtual Environment
+
+Make sure you have [Conda](https://docs.conda.io/en/latest/) installed on your machine.
+
+  ```bash
+  # Create a virtual environment with Python 3.9
+  conda create --name myenv python=3.9
+
+  # Activate the virtual environment
+  conda activate myenv
+
+  # Install project dependencies
+  pip install -r requirements.txt
+  ```
+
+### Using Docker
+
+1. **Build Docker Image:**
     ```bash
     docker build --no-cache -t ops_sat:latest .
     ```
 
-4. **Run Docker Container:**
+2. **Run Docker Container:**
     ```bash
     docker run -it ops_sat
     ```
 
-5. **Modify Configuration:**
+3. **Modify Configuration:**
     Edit the `config.json` file as needed:
     ```bash
     nano config.json
     ```
 
-6. **Navigate to Source Folder:**
+4. **Navigate to Source Folder:**
     ```bash
     cd src/
     ```
 
-7. **Run OPS-SAT Development Script:**
+5. **Run OPS-SAT Development Script:**
     ```bash
     python OPS_SAT_Dev.py
     ```
 
-8. **Choose W&B Option:**
+6. **Choose W&B Option:**
     Follow the prompts to choose the WandB option during script execution.
 
-9. **View Run Results:**
+7. **View Run Results:**
     Navigate to the WandB dashboard to observe the run results.
 
-10. **(Another way) Pull and run the following docker image**
+8. **(Another way) Pull and run the following docker image**
     ```bash
     docker pull ramezshendy/ops_sat:latest
     docker run -it ramezshendy/ops_sat:latest
