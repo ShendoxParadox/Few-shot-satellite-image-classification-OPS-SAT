@@ -144,3 +144,4 @@ The implemented loss functions to use from are: FocalLoss, SparseCategoricalCros
   - requirements.txt
 
 
+![Class Accuracies](wandb_images/class_accuracies.png)
