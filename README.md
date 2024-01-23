@@ -17,7 +17,7 @@ Welcome to the Few-shot Satellite Image Classification (OPS-SAT) repository Foll
 
 ### Using Conda
 
-#### Step 1: Create a Virtual Environment
+#### Create a Virtual Environment
 
 Make sure you have [Conda](https://docs.conda.io/en/latest/) installed on your machine.
 
