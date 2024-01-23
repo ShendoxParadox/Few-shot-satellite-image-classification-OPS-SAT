@@ -144,4 +144,7 @@ The implemented loss functions to use from are: FocalLoss, SparseCategoricalCros
   - requirements.txt
 ```
 
+## WandB dashboard
+#### The following are examples of what can be found after each run in wandb dashboard
+**Class Accuracies**
 ![Class Accuracies](wandb_images/class_accuracies.png)
