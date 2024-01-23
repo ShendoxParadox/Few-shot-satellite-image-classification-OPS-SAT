@@ -161,9 +161,6 @@ The implemented loss functions to use from are: FocalLoss, SparseCategoricalCros
 **Train - Val Loss**
 ![Train - Val Loss](wandb_images/train_val_loss.png)
 
-**Train - Val Loss**
-![Train - Val Loss](wandb_images/train_val_loss.png)
-
 **System Charts**
 ![System Charts](wandb_images/system_charts.png)
 
