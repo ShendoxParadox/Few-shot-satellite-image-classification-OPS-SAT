@@ -142,6 +142,6 @@ The implemented loss functions to use from are: FocalLoss, SparseCategoricalCros
   - config.json
   - .gitignore
   - requirements.txt
-
+```
 
 ![Class Accuracies](wandb_images/class_accuracies.png)
