@@ -148,3 +148,42 @@ The implemented loss functions to use from are: FocalLoss, SparseCategoricalCros
 #### The following are examples of what can be found after each run in wandb dashboard
 **Class Accuracies**
 ![Class Accuracies](wandb_images/class_accuracies.png)
+
+**Correct Predictions**
+![Correct Predictions](wandb_images/correct_preds.png)
+
+**Wrong Predictions**
+![Wrong Predictions](wandb_images/wrong_preds.png)
+
+**Wrong Predictions**
+![Wrong Predictions](wandb_images/wrong_preds.png)
+
+**Train - Val Accuracy**
+![Train - Val Accuracy](wandb_images/train_val_acc.png)
+
+**Train - Val Loss**
+![Train - Val Loss](wandb_images/train_val_loss.png)
+
+**Train - Val Loss**
+![Train - Val Loss](wandb_images/train_val_loss.png)
+
+**System Charts**
+![System Charts](wandb_images/system_charts.png)
+
+**System Charts**
+![System Charts](wandb_images/system_charts.png)
+
+**Run Info**
+![Run Info](wandb_images/run_info.png)
+
+**Run Info**
+![Run Info](wandb_images/run_info.png)
+
+**Configuration Parameters**
+![Configuration Parameters](wandb_images/config_params.png)
+
+**Model Files**
+![Model Files](wandb_images/model_files.png)
+
+**Runs Parallel Plot**
+![Runs Parallel Plot](wandb_images/runs_parallel_plot.png)
