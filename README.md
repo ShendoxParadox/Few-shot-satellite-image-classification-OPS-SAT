@@ -46,6 +46,12 @@ Welcome to the Few-shot Satellite Image Classification (OPS-SAT) repository Foll
 9. **View Run Results:**
     Navigate to the WandB dashboard to observe the run results.
 
+10. **(Another way) Pull and run the following docker image**
+    ```bash
+    docker pull ramezshendy/ops_sat:latest
+    docker run -it ramezshendy/ops_sat:latest
+    ```
+
 For any additional information or troubleshooting, refer to the documentation or contact the repository owner.
 
 
@@ -60,7 +66,7 @@ For any additional information or troubleshooting, refer to the documentation or
 - **Test Dataset Path:** ../Data/Variation_Synthetic_Generation_color_corrected_Augmentation/test/  
 Change the path of the training and test datasets from the available dataset variations in the Data folder.
 
-## Model Configuration
+### Model Configuration
 
 - **Transfer Learning:** false  
 Means that the model will utilize pretraining using imagenet. If true, it will use transfer learning techniques.
