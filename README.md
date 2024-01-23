@@ -155,9 +155,6 @@ The implemented loss functions to use from are: FocalLoss, SparseCategoricalCros
 **Wrong Predictions**
 ![Wrong Predictions](wandb_images/wrong_preds.png)
 
-**Wrong Predictions**
-![Wrong Predictions](wandb_images/wrong_preds.png)
-
 **Train - Val Accuracy**
 ![Train - Val Accuracy](wandb_images/train_val_acc.png)
 
@@ -169,12 +166,6 @@ The implemented loss functions to use from are: FocalLoss, SparseCategoricalCros
 
 **System Charts**
 ![System Charts](wandb_images/system_charts.png)
-
-**System Charts**
-![System Charts](wandb_images/system_charts.png)
-
-**Run Info**
-![Run Info](wandb_images/run_info.png)
 
 **Run Info**
 ![Run Info](wandb_images/run_info.png)
