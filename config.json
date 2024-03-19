@@ -1,9 +1,10 @@
 {
     "train_val_dataset_path": "Data/Variation_Synthetic_Generation/train/",
     "test_dataset_path": "Data/Variation_Synthetic_Generation/test/",
+    "competition_test_dataset_path": "Data/ops_sat_test/",
     "Dataset Name": "The OPS-SAT case dataset",
     "Dataset Variation Description": "Synthetically generated data variation",
-    "Transfer Learning":false,
+    "Transfer Learning":true,
     "Transfer Learning Dataset": "landuse",
     "wandb": {
         "project": "OPS-SAT-Thesis-Project",
