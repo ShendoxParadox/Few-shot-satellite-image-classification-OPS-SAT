@@ -23,7 +23,19 @@ import pandas as pd
 import json
 from sklearn.metrics import accuracy_score
 
+bashCommand = ". ~/.bashrc"
+os.system(bashCommand)
 
+
+gpus = tf.config.experimental.list_physical_devices('GPU')
+print(gpus)
+if gpus:
+    print("GPU found")
+    for gpu in gpus:
+        tf.config.experimental.set_memory_growth(gpu, True)
+    tf.config.experimental.set_virtual_device_configuration(
+        gpus[0],
+        [tf.config.experimental.VirtualDeviceConfiguration(memory_limit=0.7)])
 
 
 
@@ -162,29 +174,6 @@ model_init(tf_dataset=tf_dataset, tf=tf_flag)
 
 
 
-
-
-
-
-
-
-# %% competition test set evaluation
-model.load_weights('best_models/fold_5_best_model_weights.h5')
-### Model with best validation accuracy Kohen's Kappa Score
-predictions = np.zeros(len(y_test), dtype=np.int8)
-# inference loop
-for e, (image, target) in enumerate(zip(x_test, y_test)):
-    image = np.expand_dims(np.array(image), axis=0)
-    output = model.predict(image)
-    predictions[e] = np.squeeze(output).argmax()
-#Keras model score
-score_keras = cohen_kappa_score(y_test.numpy(), predictions)
-print("Score:", 1-score_keras)
-
-
-# 4 4 2 5
-
-
 # %%
 models = []
 # for i in range(1, (config["cross_validation_k"] + 1)):
@@ -220,4 +209,21 @@ for e, (image, target) in enumerate(zip(x_test, y_test)):
 #Keras model score
 score_keras = cohen_kappa_score(y_test.numpy(), predictions)
 print("Score:",1-score_keras)
+
+
+
+
+# %% competition test set evaluation
+model.load_weights('best_models/fold_5_best_model_weights.h5')
+### Model with best validation accuracy Kohen's Kappa Score
+predictions = np.zeros(len(y_test), dtype=np.int8)
+# inference loop
+for e, (image, target) in enumerate(zip(x_test, y_test)):
+    image = np.expand_dims(np.array(image), axis=0)
+    output = model.predict(image)
+    predictions[e] = np.squeeze(output).argmax()
+#Keras model score
+score_keras = cohen_kappa_score(y_test.numpy(), predictions)
+print("Score:", 1-score_keras)
+
 # %%
