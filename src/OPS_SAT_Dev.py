@@ -43,7 +43,9 @@ from sklearn.metrics import accuracy_score
 
 # Limit GPU memory usage
 gpus = tf.config.experimental.list_physical_devices('GPU')
+print(gpus)
 if gpus:
+    print("GPU found")
     for gpu in gpus:
         tf.config.experimental.set_memory_growth(gpu, True)
     tf.config.experimental.set_virtual_device_configuration(
@@ -396,6 +398,22 @@ print("Accuracy: ", accuracy)
 
 ### Log Accuracy for the ensemble model (Unifeied Test Set)
 wandb.log({"Accuracy for the ensemble model (Unified Test Set)": accuracy})
+
+
+for i in range(1, (config["cross_validation_k"] + 1)):
+    model.load_weights('models/fold_' + str(i) + '_best_model_weights.h5')
+    ### Model with best validation accuracy Kohen's Kappa Score
+    predictions = np.zeros(len(y_test), dtype=np.int8)
+    # inference loop
+    for e, (image, target) in enumerate(zip(x_test, y_test)):
+        image = np.expand_dims(np.array(image), axis=0)
+        output = model.predict(image)
+        predictions[e] = np.squeeze(output).argmax()
+    #Keras model score
+    score_keras = cohen_kappa_score(y_test.numpy(), predictions)
+    print("Score fold", i, ":", 1-score_keras)
+    wandb.log({"Score model " + str(i) + " 1-k": 1-score_keras})
+
 
 
 ## Train - Validation Visualization

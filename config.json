@@ -1,10 +1,10 @@
 {
-    "train_val_dataset_path": "Data/Variation_Synthetic_Generation/train/",
-    "test_dataset_path": "Data/Variation_Synthetic_Generation/test/",
+    "train_val_dataset_path": "Data/Variation_Original_full/train/",
+    "test_dataset_path": "Data/Variation_Original_full/test/",
     "competition_test_dataset_path": "Data/ops_sat_test/",
     "Dataset Name": "The OPS-SAT case dataset",
     "Dataset Variation Description": "Synthetically generated data variation",
-    "Transfer Learning":true,
+    "Transfer Learning":false,
     "Transfer Learning Dataset": "landuse",
     "wandb": {
         "project": "OPS-SAT-Thesis-Project",
@@ -17,7 +17,7 @@
             "loss_fun": "SparseCategoricalCrossentropy",
             "model_metrics": ["SparseCategoricalAccuracy"],
             "early_stopping_monitor": "val_sparse_categorical_accuracy",
-            "early_stopping_patience": 2,
+            "early_stopping_patience": 40,
             "model_checkpoint_monitor": "val_sparse_categorical_accuracy",
             "cross_validation_k": 5,
             "model_epochs": 200,

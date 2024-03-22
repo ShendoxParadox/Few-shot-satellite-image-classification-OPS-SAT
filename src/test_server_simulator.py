@@ -175,40 +175,40 @@ model_init(tf_dataset=tf_dataset, tf=tf_flag)
 
 
 # %%
-models = []
+# models = []
+# # for i in range(1, (config["cross_validation_k"] + 1)):
+# #     if(config["loss_fun"])=="FocalLoss":
+# #         models.append(keras.models.load_model('best_models/fold_' + str(i) + '_best_model_weights.h5', custom_objects={'sparse_categorical_focal_loss': custom_loss}))
+# #     elif(config["loss_fun"])=="SparseCategoricalCrossentropy":
+# #         models.append(keras.models.load_model('best_models/fold_' + str(i) + '_best_model_weights.h5', custom_objects={'CustomLoss': custom_loss}))
+
 # for i in range(1, (config["cross_validation_k"] + 1)):
-#     if(config["loss_fun"])=="FocalLoss":
+#     try:
 #         models.append(keras.models.load_model('best_models/fold_' + str(i) + '_best_model_weights.h5', custom_objects={'sparse_categorical_focal_loss': custom_loss}))
-#     elif(config["loss_fun"])=="SparseCategoricalCrossentropy":
+#     except:
 #         models.append(keras.models.load_model('best_models/fold_' + str(i) + '_best_model_weights.h5', custom_objects={'CustomLoss': custom_loss}))
 
-for i in range(1, (config["cross_validation_k"] + 1)):
-    try:
-        models.append(keras.models.load_model('best_models/fold_' + str(i) + '_best_model_weights.h5', custom_objects={'sparse_categorical_focal_loss': custom_loss}))
-    except:
-        models.append(keras.models.load_model('best_models/fold_' + str(i) + '_best_model_weights.h5', custom_objects={'CustomLoss': custom_loss}))
 
 
-
-y_preds = []
-for model in models:
-    y_pred = model.predict(x_test)
-    y_preds.append(y_pred)
+# y_preds = []
+# for model in models:
+#     y_pred = model.predict(x_test)
+#     y_preds.append(y_pred)
     
-# combine the predictions using voting or averaging
-y_ensemble = sum(y_preds) / config["cross_validation_k"]
+# # combine the predictions using voting or averaging
+# y_ensemble = sum(y_preds) / config["cross_validation_k"]
 
 
-### Ensemble model Kohen's Kappa Score
-predictions = np.zeros(len(y_test), dtype=np.int8)
-# inference loop
-for e, (image, target) in enumerate(zip(x_test, y_test)):
-    image = np.expand_dims(np.array(image), axis=0)
-    output = y_ensemble[e]
-    predictions[e] = np.squeeze(output).argmax()
-#Keras model score
-score_keras = cohen_kappa_score(y_test.numpy(), predictions)
-print("Score:",1-score_keras)
+# ### Ensemble model Kohen's Kappa Score
+# predictions = np.zeros(len(y_test), dtype=np.int8)
+# # inference loop
+# for e, (image, target) in enumerate(zip(x_test, y_test)):
+#     image = np.expand_dims(np.array(image), axis=0)
+#     output = y_ensemble[e]
+#     predictions[e] = np.squeeze(output).argmax()
+# #Keras model score
+# score_keras = cohen_kappa_score(y_test.numpy(), predictions)
+# print("Score:",1-score_keras)
 
 
 

@@ -13,3 +13,15 @@ cv_visualization.png
 .ipynb_checkpoints/ensemble_learning-checkpoint.png
 ensemble_learning.png
 ensemble_learning_classification.png
+best_models/fold_1_best_model_weights.h5
+best_models/fold_2_best_model_weights.h5
+best_models/fold_3_best_model_weights.h5
+best_models/fold_4_best_model_weights.h5
+best_models/fold_5_best_model_weights.h5
+.gitignore
+models/fold_1_best_model_weights.h5
+models/best_weights.h5
+models/fold_2_best_model_weights.h5
+models/fold_3_best_model_weights.h5
+models/fold_4_best_model_weights.h5
+models/fold_5_best_model_weights.h5
