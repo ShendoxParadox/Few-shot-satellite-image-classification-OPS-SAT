@@ -5,10 +5,10 @@ import os
 
 ## Application of Color Correction on the Synthically Generated Images
 
-dirs = os.listdir("Data/Variation_Synthetic_Generation_color_corrected/train/")
+dirs = os.listdir("Data/Variation_Synthetic_Generation_full_filtered_color_corrected/train/")
 for directory in dirs:
     
-    path = "Data/Variation_Synthetic_Generation_color_corrected/train/" + directory + "/"
+    path = "Data/Variation_Synthetic_Generation_full_filtered_color_corrected/train/" + directory + "/"
     files = os.listdir(path)
     
     references = []

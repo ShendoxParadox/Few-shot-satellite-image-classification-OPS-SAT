@@ -175,19 +175,32 @@ elif(config["loss_fun"])=="SparseCategoricalCrossentropy":
 
 
 tf_flag = config_data.get('Transfer Learning', '')
+pt_flag = config_data.get('Pre-Training', '')
 tf_dataset = config_data.get('Transfer Learning Dataset', '')
+
+if(pt_flag == True):
+    wandb.log({"Pre-training": "Imagenet"})
+elif(pt_flag == False):
+    wandb.log({"Pre-training": "None"})
 
 # %%
 
-def model_init(tf_dataset = 'imagenet', tf = True):
+def model_init(tf_dataset = 'imagenet', tf = True, pt=True):
     global model
     global early_stopping
     global checkpoint
 
     if(tf == False): ## pretraining
-        model = EfficientNetLiteB0(classes=config["num_classes"], weights="imagenet",
-                                    input_shape=config["input_shape"], classifier_activation=None, 
-                                    include_top = False)
+        if(pt == True):
+            model = EfficientNetLiteB0(classes=config["num_classes"], weights="imagenet",
+                                        input_shape=config["input_shape"], classifier_activation=None, 
+                                        include_top = False)
+        elif(pt == False):
+            print("No Pre-training")
+            model = EfficientNetLiteB0(classes=config["num_classes"], weights=None,
+                                        input_shape=config["input_shape"], classifier_activation=None, 
+                                        include_top = False)
+
     
         x = model.output
         x = GlobalAveragePooling2D()(x)
@@ -253,7 +266,7 @@ training_loss = []
 validation_loss = []
 
 ## Initializing the model
-model_init(tf_dataset=tf_dataset, tf=tf_flag)
+model_init(tf_dataset=tf_dataset, tf=tf_flag, pt=pt_flag)
 
 ## counter for folds
 i = 1
@@ -291,7 +304,7 @@ for train_idx, val_idx in kf.split(x_train_val):
     wandb.save(new_name)
     
     ## Reseting the model for the next fold
-    model_init(tf_dataset=tf_dataset, tf=tf_flag)
+    model_init(tf_dataset=tf_dataset, tf=tf_flag, pt=pt_flag)
 
 
 

@@ -5,6 +5,7 @@
     "Dataset Name": "The OPS-SAT case dataset",
     "Dataset Variation Description": "Synthetically generated data variation full and filtered",
     "Transfer Learning":false,
+    "Pre-Training":false,
     "Transfer Learning Dataset": "landuse",
     "wandb": {
         "project": "OPS-SAT-Thesis-Project",
@@ -21,8 +22,8 @@
             "model_checkpoint_monitor": "val_sparse_categorical_accuracy",
             "cross_validation_k": 5,
             "model_epochs": 200,
-            "model_batch_size": 8,
-            "alpha_focal_loss": 0.2,
+            "model_batch_size": 16,
+            "alpha_focal_loss": 0.25,
             "gamma_focal_loss": 2,
             "n_freeze_layers": 5
         }
