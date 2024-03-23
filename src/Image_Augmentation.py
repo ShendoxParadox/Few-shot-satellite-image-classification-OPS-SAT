@@ -1,3 +1,4 @@
+# %%
 from skimage import transform
 import imageio as iio
 import cv2
@@ -8,12 +9,12 @@ from imgaug import augmenters as iaa
 
 ## Rotation
 
-## rotation angles
-rotations = [90, 180, 270]
-dirs = os.listdir("Data/Variation_Synthetic_Generation_color_corrected_Augmentation/train/")
+# %% rotation angles
+rotations = [90]
+dirs = os.listdir("../Data/Variation_Synthetic_Generation_full_filtered_augmented/train/")
 for directory in dirs:
     
-    path = "Data/Variation_Synthetic_Generation_color_corrected_Augmentation/train/" + directory + "/"
+    path = "../Data/Variation_Synthetic_Generation_full_filtered_augmented/train/" + directory + "/"
     files = os.listdir(path)
     
     
@@ -28,14 +29,15 @@ for directory in dirs:
         
             file_write = file[:-4]
             rotated_img = cv2.convertScaleAbs(rotated_img, alpha=(255.0))
-            cv2.imwrite("Data/Variation_Synthetic_Generation_color_corrected_Augmentation//train/" + directory + "/" + file_write + "_" + "rotated_" + str(r) + ".png", rotated_img)
-        
+            cv2.imwrite("../Data/Variation_Synthetic_Generation_full_filtered_augmented//train/" + directory + "/" + file_write + "_" + "rotated_" + str(r) + ".png", rotated_img)
 
-## Flip
-            
+
+
+# %%
+## Flip            
 for directory in dirs:
     
-    path = "Data/Variation_Synthetic_Generation_color_corrected_Augmentation/train/" + directory + "/"
+    path = "../Data/Variation_Synthetic_Generation_full_filtered_augmented/train/" + directory + "/"
     files = os.listdir(path)
 #     n_samples = len(files)
     
@@ -46,14 +48,19 @@ for directory in dirs:
     p.process()
     
     
-## Brightness and Contrast
-    
+
+# %%
+## Brightness and Contrast  
 for directory in dirs:
     
-    path = "Data/Variation_Synthetic_Generation_color_corrected_Augmentation/train/" + directory + "/"
+    path = "../Data/Variation_Synthetic_Generation_full_filtered_augmented/train/" + directory + "/"
     files = os.listdir(path)
     
-    
+    new_folder = "../Data/Variation_Synthetic_Generation_full_filtered_augmented/train/" + directory + "/" + "brightness_contrast"
+    # Create the folder
+    os.makedirs(new_folder, exist_ok=True)
+
+
     for file in files:
         
         img = cv2.imread(path + file)
@@ -63,18 +70,23 @@ for directory in dirs:
         transformed = transform(image = img)
         transformed_img = transformed["image"]
 
+
         file_write = file[:-4]
-        cv2.imwrite("Data/Variation_Synthetic_Generation_color_corrected_Augmentation/train/" + directory + "/" + file_write + "_bright_contrast_" + ".png", transformed_img)
+        cv2.imwrite("../Data/Variation_Synthetic_Generation_full_filtered_augmented/train/" + directory + "/brightness_contrast/" + file_write + "_bright_contrast_" + ".png", transformed_img)
 
 
 
-## Noise
-        
+
+# %%
+## Noise 
 for directory in dirs:
     
-    path = "Data/Variation_Synthetic_Generation_color_corrected_Augmentation/train/" + directory + "/"
+    path = "../Data/Variation_Synthetic_Generation_full_filtered_augmented/train/" + directory + "/"
     files = os.listdir(path)
     
+    new_folder = "../Data/Variation_Synthetic_Generation_full_filtered_augmented/train/" + directory + "/" + "noise"
+    # Create the folder
+    os.makedirs(new_folder, exist_ok=True)
     
     for file in files:
         
@@ -85,4 +97,5 @@ for directory in dirs:
         transformed_img = transform(image = img)
 
         file_write = file[:-4]
-        cv2.imwrite("Data/Variation_Synthetic_Generation_color_corrected_Augmentation/train/" + directory + "/" + file_write + "_" + "noise" + ".png", cv2.cvtColor(transformed_img, cv2.COLOR_RGB2BGR))
+        cv2.imwrite("../Data/Variation_Synthetic_Generation_full_filtered_augmented/train/" + directory + "/noise/" + file_write + "_" + "noise" + ".png", cv2.cvtColor(transformed_img, cv2.COLOR_RGB2BGR))
+# %%
