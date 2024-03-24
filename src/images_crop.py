@@ -33,7 +33,7 @@ def crop_and_resize_images(directory, output_size=(200, 200)):
                 print(f"Processed and saved {filename}")
 
 # %%
-directory = '../Data/Variation_Synthetic_Generation_full/train/process'  # Change this to the path of your image folder
+directory = '../Data/generate_2/process'  # Change this to the path of your image folder
 crop_and_resize_images(directory)
 
 # %%
