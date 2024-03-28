@@ -214,7 +214,7 @@ model_init(tf_dataset=tf_dataset, tf=tf_flag)
 
 
 # %% competition test set evaluation
-model.load_weights('best_models/fold_5_best_model_weights.h5')
+model.load_weights('best_models/fold_1_best_model_weights.h5')
 ### Model with best validation accuracy Kohen's Kappa Score
 predictions = np.zeros(len(y_test), dtype=np.int8)
 # inference loop
@@ -226,4 +226,14 @@ for e, (image, target) in enumerate(zip(x_test, y_test)):
 score_keras = cohen_kappa_score(y_test.numpy(), predictions)
 print("Score:", 1-score_keras)
 
+
+correct = 0
+total = len(y_test.numpy())
+
+for pred, label in zip(predictions, y_test.numpy()):
+    if pred == label:
+        correct += 1
+
+accuracy = correct / total
+print("Accuracy: ", accuracy)
 # %%
