@@ -37,7 +37,7 @@ for directory in dirs:
 ## Flip            
 for directory in dirs:
     
-    path = "../Data/Variation_Synthetic_Generation_full_filtered_2_augmented/train/" + directory + "/"
+    path = "../Data/Variation_Synthetic_Generation_full_filtered_3_augmented/train/" + directory + "/"
     files = os.listdir(path)
 #     n_samples = len(files)
     
@@ -81,10 +81,10 @@ for directory in dirs:
 ## Noise 
 for directory in dirs:
     
-    path = "../Data/Variation_Synthetic_Generation_full_filtered_2_augmented/train/" + directory + "/"
+    path = "../Data/Variation_Synthetic_Generation_full_filtered_3_augmented/train/" + directory + "/"
     files = os.listdir(path)
     
-    new_folder = "../Data/Variation_Synthetic_Generation_full_filtered_2_augmented/train/" + directory + "/" + "noise"
+    new_folder = "../Data/Variation_Synthetic_Generation_full_filtered_3_augmented/train/" + directory + "/" + "noise"
     # Create the folder
     os.makedirs(new_folder, exist_ok=True)
     
@@ -97,5 +97,5 @@ for directory in dirs:
         transformed_img = transform(image = img)
 
         file_write = file[:-4]
-        cv2.imwrite("../Data/Variation_Synthetic_Generation_full_filtered_2_augmented/train/" + directory + "/noise/" + file_write + "_" + "noise" + ".png", cv2.cvtColor(transformed_img, cv2.COLOR_RGB2BGR))
+        cv2.imwrite("../Data/Variation_Synthetic_Generation_full_filtered_3_augmented/train/" + directory + "/noise/" + file_write + "_" + "noise" + ".png", cv2.cvtColor(transformed_img, cv2.COLOR_RGB2BGR))
 # %%
