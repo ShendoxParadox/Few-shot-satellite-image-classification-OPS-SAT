@@ -23,7 +23,7 @@
             "cross_validation_k": 2,
             "model_epochs": 200,
             "model_batch_size": 8,
-            "alpha_focal_loss": 0.25,
+            "alpha_focal_loss": 0.5,
             "gamma_focal_loss": 2,
             "n_freeze_layers": 5
         }

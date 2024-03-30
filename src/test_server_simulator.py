@@ -182,7 +182,8 @@ model_init(tf_dataset=tf_dataset, tf=tf_flag)
 # #     elif(config["loss_fun"])=="SparseCategoricalCrossentropy":
 # #         models.append(keras.models.load_model('best_models/fold_' + str(i) + '_best_model_weights.h5', custom_objects={'CustomLoss': custom_loss}))
 
-# for i in range(1, (config["cross_validation_k"] + 1)):
+# # for i in range(1, (config["cross_validation_k"] + 1)):
+# for i in range(1, (3 + 1)):
 #     try:
 #         models.append(keras.models.load_model('best_models/fold_' + str(i) + '_best_model_weights.h5', custom_objects={'sparse_categorical_focal_loss': custom_loss}))
 #     except:
@@ -196,7 +197,8 @@ model_init(tf_dataset=tf_dataset, tf=tf_flag)
 #     y_preds.append(y_pred)
     
 # # combine the predictions using voting or averaging
-# y_ensemble = sum(y_preds) / config["cross_validation_k"]
+# # y_ensemble = sum(y_preds) / config["cross_validation_k"]
+# y_ensemble = sum(y_preds) / 3
 
 
 # ### Ensemble model Kohen's Kappa Score
@@ -214,7 +216,7 @@ model_init(tf_dataset=tf_dataset, tf=tf_flag)
 
 
 # %% competition test set evaluation
-model.load_weights('best_models/fold_1_best_model_weights.h5')
+model.load_weights('best_models/fold_3_best_model_weights.h5')
 ### Model with best validation accuracy Kohen's Kappa Score
 predictions = np.zeros(len(y_test), dtype=np.int8)
 # inference loop
