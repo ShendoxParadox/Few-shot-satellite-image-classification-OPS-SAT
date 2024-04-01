@@ -22,6 +22,7 @@ from wandb.keras import WandbMetricsLogger, WandbModelCheckpoint
 import pandas as pd
 import json
 from sklearn.metrics import accuracy_score
+from PIL import Image
 
 bashCommand = ". ~/.bashrc"
 os.system(bashCommand)
@@ -238,4 +239,59 @@ for pred, label in zip(predictions, y_test.numpy()):
 
 accuracy = correct / total
 print("Accuracy: ", accuracy)
+
+
+
+# %%
+class_name_label = {}
+for i, class_name in enumerate(class_names):
+    class_name_label[i] = class_name
+
+class_name_label
+
+prediction_names = [class_name_label[num] for num in predictions]
+actual_names = [class_name_label[num] for num in y_test.numpy()]
+pred_is_actual = [x == y for x, y in zip(prediction_names, actual_names)]
+
+
+for i, (img, pred, label) in enumerate(zip(x_test, prediction_names, actual_names)):
+    # wandb.log({'All Predictions - Unified Test Set': wandb.Image(img, caption='predicted: {}, actual: {}'.format(pred, label))})
+    # print(i)
+    if(pred_is_actual[i]):
+        img_array = img.numpy()
+        # img = Image.fromarray(img)
+        img_pil = Image.fromarray(img_array.astype('uint8'))
+        # Format the filename based on your prediction and label
+        filename = 'correct_wrong_preds/correct/predicted_{}_actual_{}_{}.png'.format(pred, label, i)
+        # Save the image with the caption as its filename
+        img_pil.save(filename)
+        # wandb.log({'Correct Predictions - Unified Test Set': wandb.Image(img, caption='predicted: {}, actual: {}'.format(pred, label))})
+    else:
+        # if not isinstance(img, Image.Image):
+        img_array = img.numpy()
+        img_pil = Image.fromarray(img_array.astype('uint8'))
+        # Format the filename based on your prediction and label
+        filename = 'correct_wrong_preds/wrong/predicted_{}_actual_{}_{}.png'.format(pred, label, i)
+        # Save the image with the caption as its filename
+        img_pil.save(filename)
+        # wandb.log({'Wrong Predictions - Unified Test Set': wandb.Image(img, caption='predicted: {}, actual: {}'.format(pred, label))})
+
+
+
+
+# %%
+### Class accuracies
+df_preds = pd.DataFrame({"actual": actual_names, "prediction": prediction_names, "correct": pred_is_actual})
+
+# group the dataframe by the 'actual' column
+grouped = df_preds.groupby('actual')
+class_accuracy = pd.DataFrame(data={}, columns=['class', 'accuracy'])
+# calculate the accuracy for each group
+for name, group in grouped:
+    accuracy = accuracy_score(group['actual'], group['prediction'])
+    # print('Accuracy for class {}: {}'.format(name, accuracy))
+    new_row = {"class": name, 'accuracy': accuracy}
+    class_accuracy = pd.concat([class_accuracy, pd.DataFrame([new_row])], ignore_index=True)
+class_accuracy = class_accuracy.sort_values('accuracy', ascending=True).reset_index(drop = True)
+class_accuracy
 # %%
