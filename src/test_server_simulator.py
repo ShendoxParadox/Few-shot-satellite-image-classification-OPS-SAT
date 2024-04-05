@@ -23,6 +23,7 @@ import pandas as pd
 import json
 from sklearn.metrics import accuracy_score
 from PIL import Image
+import time
 
 bashCommand = ". ~/.bashrc"
 os.system(bashCommand)
@@ -217,10 +218,11 @@ model_init(tf_dataset=tf_dataset, tf=tf_flag)
 
 
 # %% competition test set evaluation
-model.load_weights('best_models/fold_3_best_model_weights.h5')
+model.load_weights('best_models/fold_1_best_model_weights.h5')
 ### Model with best validation accuracy Kohen's Kappa Score
 predictions = np.zeros(len(y_test), dtype=np.int8)
 # inference loop
+start_time = time.time()
 for e, (image, target) in enumerate(zip(x_test, y_test)):
     image = np.expand_dims(np.array(image), axis=0)
     output = model.predict(image)
@@ -228,6 +230,10 @@ for e, (image, target) in enumerate(zip(x_test, y_test)):
 #Keras model score
 score_keras = cohen_kappa_score(y_test.numpy(), predictions)
 print("Score:", 1-score_keras)
+
+end_time = time.time()
+elapsed_time = end_time - start_time
+print(f"Elapsed time: {elapsed_time} seconds")
 
 
 correct = 0
@@ -242,39 +248,40 @@ print("Accuracy: ", accuracy)
 
 
 
+
 # %%
-class_name_label = {}
-for i, class_name in enumerate(class_names):
-    class_name_label[i] = class_name
+# class_name_label = {}
+# for i, class_name in enumerate(class_names):
+#     class_name_label[i] = class_name
 
-class_name_label
+# class_name_label
 
-prediction_names = [class_name_label[num] for num in predictions]
-actual_names = [class_name_label[num] for num in y_test.numpy()]
-pred_is_actual = [x == y for x, y in zip(prediction_names, actual_names)]
+# prediction_names = [class_name_label[num] for num in predictions]
+# actual_names = [class_name_label[num] for num in y_test.numpy()]
+# pred_is_actual = [x == y for x, y in zip(prediction_names, actual_names)]
 
 
-for i, (img, pred, label) in enumerate(zip(x_test, prediction_names, actual_names)):
-    # wandb.log({'All Predictions - Unified Test Set': wandb.Image(img, caption='predicted: {}, actual: {}'.format(pred, label))})
-    # print(i)
-    if(pred_is_actual[i]):
-        img_array = img.numpy()
-        # img = Image.fromarray(img)
-        img_pil = Image.fromarray(img_array.astype('uint8'))
-        # Format the filename based on your prediction and label
-        filename = 'correct_wrong_preds/correct/predicted_{}_actual_{}_{}.png'.format(pred, label, i)
-        # Save the image with the caption as its filename
-        img_pil.save(filename)
-        # wandb.log({'Correct Predictions - Unified Test Set': wandb.Image(img, caption='predicted: {}, actual: {}'.format(pred, label))})
-    else:
-        # if not isinstance(img, Image.Image):
-        img_array = img.numpy()
-        img_pil = Image.fromarray(img_array.astype('uint8'))
-        # Format the filename based on your prediction and label
-        filename = 'correct_wrong_preds/wrong/predicted_{}_actual_{}_{}.png'.format(pred, label, i)
-        # Save the image with the caption as its filename
-        img_pil.save(filename)
-        # wandb.log({'Wrong Predictions - Unified Test Set': wandb.Image(img, caption='predicted: {}, actual: {}'.format(pred, label))})
+# for i, (img, pred, label) in enumerate(zip(x_test, prediction_names, actual_names)):
+#     # wandb.log({'All Predictions - Unified Test Set': wandb.Image(img, caption='predicted: {}, actual: {}'.format(pred, label))})
+#     # print(i)
+#     if(pred_is_actual[i]):
+#         img_array = img.numpy()
+#         # img = Image.fromarray(img)
+#         img_pil = Image.fromarray(img_array.astype('uint8'))
+#         # Format the filename based on your prediction and label
+#         filename = 'correct_wrong_preds/correct/predicted_{}_actual_{}_{}.png'.format(pred, label, i)
+#         # Save the image with the caption as its filename
+#         img_pil.save(filename)
+#         # wandb.log({'Correct Predictions - Unified Test Set': wandb.Image(img, caption='predicted: {}, actual: {}'.format(pred, label))})
+#     else:
+#         # if not isinstance(img, Image.Image):
+#         img_array = img.numpy()
+#         img_pil = Image.fromarray(img_array.astype('uint8'))
+#         # Format the filename based on your prediction and label
+#         filename = 'correct_wrong_preds/wrong/predicted_{}_actual_{}_{}.png'.format(pred, label, i)
+#         # Save the image with the caption as its filename
+#         img_pil.save(filename)
+#         # wandb.log({'Wrong Predictions - Unified Test Set': wandb.Image(img, caption='predicted: {}, actual: {}'.format(pred, label))})
 
 
 
