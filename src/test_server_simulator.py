@@ -218,7 +218,7 @@ model_init(tf_dataset=tf_dataset, tf=tf_flag)
 
 
 # %% competition test set evaluation
-model.load_weights('best_models/fold_1_best_model_weights.h5')
+model.load_weights('best_models/fold_3_best_model_weights.h5')
 ### Model with best validation accuracy Kohen's Kappa Score
 predictions = np.zeros(len(y_test), dtype=np.int8)
 # inference loop
@@ -288,17 +288,17 @@ print("Accuracy: ", accuracy)
 
 # %%
 ### Class accuracies
-df_preds = pd.DataFrame({"actual": actual_names, "prediction": prediction_names, "correct": pred_is_actual})
+# df_preds = pd.DataFrame({"actual": actual_names, "prediction": prediction_names, "correct": pred_is_actual})
 
-# group the dataframe by the 'actual' column
-grouped = df_preds.groupby('actual')
-class_accuracy = pd.DataFrame(data={}, columns=['class', 'accuracy'])
-# calculate the accuracy for each group
-for name, group in grouped:
-    accuracy = accuracy_score(group['actual'], group['prediction'])
-    # print('Accuracy for class {}: {}'.format(name, accuracy))
-    new_row = {"class": name, 'accuracy': accuracy}
-    class_accuracy = pd.concat([class_accuracy, pd.DataFrame([new_row])], ignore_index=True)
-class_accuracy = class_accuracy.sort_values('accuracy', ascending=True).reset_index(drop = True)
-class_accuracy
+# # group the dataframe by the 'actual' column
+# grouped = df_preds.groupby('actual')
+# class_accuracy = pd.DataFrame(data={}, columns=['class', 'accuracy'])
+# # calculate the accuracy for each group
+# for name, group in grouped:
+#     accuracy = accuracy_score(group['actual'], group['prediction'])
+#     # print('Accuracy for class {}: {}'.format(name, accuracy))
+#     new_row = {"class": name, 'accuracy': accuracy}
+#     class_accuracy = pd.concat([class_accuracy, pd.DataFrame([new_row])], ignore_index=True)
+# class_accuracy = class_accuracy.sort_values('accuracy', ascending=True).reset_index(drop = True)
+# class_accuracy
 # %%
